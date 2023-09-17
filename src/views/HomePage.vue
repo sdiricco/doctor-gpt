@@ -9,12 +9,12 @@
     <ion-content :fullscreen="true">
       <div class="main">
         <div class="container">
-          <ion-input class="custom-input" label-placement="floating" fill="outline" v-model="input"></ion-input>
-          <ion-button shape="round" @click="onClick">Invio</ion-button>
+          <ion-input class="custom-input" label-placement="floating" fill="outline" v-model="input" :clear-input="true"></ion-input>
+          <ion-fab-button @click="onClick">
+            <ion-icon :icon="sendOutline" ></ion-icon>
+          </ion-fab-button>
         </div>
-        <div>
-          {{ messageGpt }}
-        </div>
+        <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
       </div>
     </ion-content>
   </ion-page>
@@ -22,32 +22,32 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton } from "@ionic/vue";
-import useGpt from "@/services/gpt";
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonTextarea, IonFabButton, IonIcon } from "@ionic/vue";
+import { add, sendOutline } from 'ionicons/icons';
+import { useGpt, execGpt } from "@/services/gpt";
 
 const input = ref("");
-const messageGpt = ref("");
+const { message } = useGpt();
 async function onClick() {
-  const response = await useGpt(input.value);
-  messageGpt.value = response.message;
+  await execGpt(input.value);
 }
 </script>
 
 <style scoped>
-
-
-.main{
-  margin: 32px;
+.main {
+  margin: 16px;
 }
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 .custom-input {
   border: 2px solid #666;
   border-radius: 32px;
-  margin-right: 16px;
+  margin-right: 8px;
+  background: transparent;
+  padding: 8px !important;
 }
 </style>
