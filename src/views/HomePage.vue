@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>DOCTOR AI</ion-title>
+        <ion-title>Doctor Ai</ion-title>
       </ion-toolbar>
     </ion-header>
 
