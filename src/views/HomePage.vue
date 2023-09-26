@@ -2,10 +2,10 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div class="h-full flex flex-column">
-        <div class="header p-3">
-          <h1>Doctor Ai v0.0.4</h1>
+        <div class="header p-3 w-full absolute">
+          <div class="text-3xl">Doctor Ai v0.0.4</div>
         </div>
-        <div class="overflow-auto flex flex-column justify-content-between h-full">
+        <div class="overflow-auto flex flex-column justify-content-between h-full mt-8">
           <div class="p-2 overflow-auto">
             <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
           </div>
