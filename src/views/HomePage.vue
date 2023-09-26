@@ -2,12 +2,12 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>Doctor Ai v0.0.2</ion-title>
+        <ion-title>Doctor Ai v0.0.3</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true" >
-      <div class="flex flex-column justify-content-between h-full" :class="{ 'keyboard-open': isKeyboardOpen }">
+      <div class="flex flex-column justify-content-between h-full">
         <div class="p-2 overflow-auto">
           <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
         </div>
@@ -33,24 +33,6 @@ async function onClick() {
   await execGpt(input.value);
 }
 
-const isKeyboardOpen = ref(false);
-let windowHeight = window.innerHeight;
-
-const calculateKeyboardHeight = () => {
-  const newWindowHeight = window.innerHeight;
-  const keyboardHeight = windowHeight - newWindowHeight;
-  document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
-  isKeyboardOpen.value = keyboardHeight > 0;
-};
-
-onMounted(() => {
-  window.addEventListener('resize', calculateKeyboardHeight);
-  calculateKeyboardHeight();
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', calculateKeyboardHeight);
-});
 </script>
 
 <style scoped>
@@ -70,10 +52,5 @@ onUnmounted(() => {
 .custom-textarea.p-inputtext:enabled:focus {
   box-shadow: none;
   border-color: transparent;
-}
-
-.keyboard-open {
-  height: calc(100% - var(--keyboard-height));
-  overflow: hidden;
 }
 </style>
