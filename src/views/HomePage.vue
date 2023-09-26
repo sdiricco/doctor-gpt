@@ -3,7 +3,7 @@
     <ion-content :fullscreen="true">
       <div class="h-full flex flex-column">
         <div class="header p-3 w-full absolute">
-          <div class="text-3xl">Doctor Ai v0.0.4</div>
+          <div class="text-3xl">Doctor Ai v0.0.4 - hk {{ keyboardHeight }}</div>
         </div>
         <div class="overflow-auto flex flex-column justify-content-between h-full mt-8">
           <div class="p-2 overflow-auto">
@@ -27,10 +27,26 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButt
 import { useGpt, execGpt } from "@/services/gpt";
 
 const input = ref("");
+const keyboardHeight = ref(0);
 const { message } = useGpt();
 async function onClick() {
   await execGpt(input.value);
 }
+const calculateContentHeight = () => {
+  const newWindowHeight = window.innerHeight;
+  keyboardHeight.value = windowHeight - newWindowHeight;
+};
+
+let windowHeight = window.innerHeight;
+
+onMounted(() => {
+  window.addEventListener('resize', calculateContentHeight);
+  calculateContentHeight();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', calculateContentHeight);
+});
 </script>
 
 <style scoped>
