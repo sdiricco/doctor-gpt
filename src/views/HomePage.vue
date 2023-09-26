@@ -1,20 +1,19 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Doctor Ai v0.0.3</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content :fullscreen="true" >
-      <div class="flex flex-column justify-content-between h-full">
-        <div class="p-2 overflow-auto">
-          <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
+    <ion-content :fullscreen="true">
+      <div class="h-full flex flex-column">
+        <div class="header p-3">
+          <h1>Doctor Ai v0.0.4</h1>
         </div>
-        <div class="w-full flex align-items-end surface-100">
-          <Textarea v-model="input" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full" />
-          <div class="cursor-pointer m-2 mx-4" @click="onClick">
-            <i class="pi pi-send text-primary"></i>
+        <div class="overflow-auto flex flex-column justify-content-between h-full">
+          <div class="p-2 overflow-auto">
+            <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
+          </div>
+          <div class="w-full flex align-items-end surface-100">
+            <Textarea v-model="input" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full" />
+            <div class="cursor-pointer m-2 mx-4" @click="onClick">
+              <i class="pi pi-send text-primary"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -32,7 +31,6 @@ const { message } = useGpt();
 async function onClick() {
   await execGpt(input.value);
 }
-
 </script>
 
 <style scoped>
@@ -52,5 +50,9 @@ async function onClick() {
 .custom-textarea.p-inputtext:enabled:focus {
   box-shadow: none;
   border-color: transparent;
+}
+
+.header{
+  border: 1px solid #e2e2e2;
 }
 </style>
