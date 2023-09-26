@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>Doctor Ai</ion-title>
+        <ion-title>Doctor Ai v0.0.1</ion-title>
       </ion-toolbar>
     </ion-header>
 
