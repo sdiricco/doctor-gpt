@@ -2,18 +2,18 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div class="h-full flex flex-column">
-        <div class="header p-3 w-full absolute">
-          <div class="text-3xl">Doctor Ai v0.0.4 - hk {{ keyboardHeight }}</div>
+        <div class="header p-4 w-full bg-primary">
+          <div class="text-3xl">Doctor Ai v0.0.5</div>
         </div>
-        <div class="overflow-auto flex flex-column justify-content-between h-full mt-8">
-          <div class="p-2 overflow-auto">
-            <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
-          </div>
-          <div class="w-full flex align-items-end surface-100">
-            <Textarea v-model="input" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full" />
+        <div class="overflow-auto flex flex-column h-full">
+          <div class="flex align-items-center surface-100 p-2 m-3 border-round-3xl">
+            <Textarea v-model="input" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full border-round-3xl text-xl" />
             <div class="cursor-pointer m-2 mx-4" @click="onClick">
-              <i class="pi pi-send text-primary"></i>
+              <i class="pi pi-send text-primary text-2xl"></i>
             </div>
+          </div>
+          <div class="p-2 overflow-auto">
+            <Textarea :value="message" autoResize rows="1" cols="2" class="w-full custom-textarea text-xl" />
           </div>
         </div>
       </div>
@@ -22,31 +22,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, onBeforeUnmount } from "vue";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonTextarea, IonFabButton, IonIcon } from "@ionic/vue";
 import { useGpt, execGpt } from "@/services/gpt";
 
 const input = ref("");
-const keyboardHeight = ref(0);
 const { message } = useGpt();
 async function onClick() {
   await execGpt(input.value);
 }
-const calculateContentHeight = () => {
-  const newWindowHeight = window.innerHeight;
-  keyboardHeight.value = windowHeight - newWindowHeight;
-};
-
-let windowHeight = window.innerHeight;
-
-onMounted(() => {
-  window.addEventListener('resize', calculateContentHeight);
-  calculateContentHeight();
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', calculateContentHeight);
-});
 </script>
 
 <style scoped>
@@ -66,9 +50,5 @@ onUnmounted(() => {
 .custom-textarea.p-inputtext:enabled:focus {
   box-shadow: none;
   border-color: transparent;
-}
-
-.header{
-  border: 1px solid #e2e2e2;
 }
 </style>
