@@ -9,6 +9,7 @@ import './registerServiceWorker';
 import "/node_modules/primeflex/primeflex.css";
 //core
 import "primevue/resources/primevue.min.css";
+import 'primeicons/primeicons.css';
 
 /*********************************************
  * IONIC
@@ -32,7 +33,7 @@ import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
 
 /* Theme variables */
-import './theme/variables.css';
+// import './theme/variables.css';
 
 /*****************************************************************************/
 /* PRIME VUE - IMPORT COMPONENTS */

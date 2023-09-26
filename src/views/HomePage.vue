@@ -7,14 +7,16 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <div class="main">
-        <div class="container">
-          <ion-input class="custom-input" label-placement="floating" fill="outline" v-model="input" :clear-input="true"></ion-input>
-          <ion-fab-button @click="onClick">
-            <ion-icon :icon="sendOutline" ></ion-icon>
-          </ion-fab-button>
+      <div class="flex flex-column justify-content-between h-full">
+        <div class="p-2 overflow-auto">
+          <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
         </div>
-        <ion-textarea :auto-grow="true" :value="message"> </ion-textarea>
+        <div class="w-full flex align-items-end surface-100">
+          <Textarea v-model="input" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full" />
+          <div class="cursor-pointer m-2 mx-4" @click="onClick">
+            <i class="pi pi-send text-primary"></i>
+          </div>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -23,7 +25,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonTextarea, IonFabButton, IonIcon } from "@ionic/vue";
-import { add, sendOutline } from 'ionicons/icons';
 import { useGpt, execGpt } from "@/services/gpt";
 
 const input = ref("");
@@ -34,20 +35,21 @@ async function onClick() {
 </script>
 
 <style scoped>
-.main {
-  margin: 16px;
-}
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-}
 .custom-input {
   border: 2px solid #666;
   border-radius: 32px;
   margin-right: 8px;
   background: transparent;
   padding: 8px !important;
+}
+
+.custom-textarea {
+  border: none;
+  box-shadow: none;
+}
+
+.custom-textarea.p-inputtext:enabled:focus {
+  box-shadow: none;
+  border-color: transparent;
 }
 </style>
