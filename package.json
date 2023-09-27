@@ -13,6 +13,9 @@
     "postinstall": "yarn build",
     "start": "vue-cli-service serve"
   },
+  "engines": {
+    "node": ">=16 <18"
+  },
   "dependencies": {
     "@capacitor/android": "4.0.1",
     "@capacitor/app": "4.0.1",
