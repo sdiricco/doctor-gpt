@@ -2,14 +2,21 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div class="h-full flex flex-column">
-        <div class="header p-4 w-full bg-primary">
-          <div class="text-3xl">Doctor Ai v0.0.5</div>
+        <div class="header surface-100 p-3 w-full border-bottom-2 surface-border">
+          <div class="text-xl text-color-secondary font-bold">Doctor Ai</div>
         </div>
         <div class="overflow-auto flex flex-column justify-content-between h-full">
-          <div class="h-full" >
-            <Textarea id="textarea" :value="message" autoResize rows="1" cols="2" class="w-full custom-textarea text-xl h-full overflow-auto p-2" />
+          <div id="textarea"  class="h-full overflow-auto surface-100 p-3" >
+            <div v-for="(htmlMessageObj, index) in htmlMessages" :key="`message-${index}`" class="border-bottom-2 surface-border mb-4">
+              <div class="text-xl text-primary font-bold">{{ capitalize(htmlMessageObj.role) }}</div>
+              <div class="text-color text-xl" v-html="htmlMessageObj.contentHtml"></div>
+            </div>
+            <div v-if="status === 1">
+              <div class="text-xl text-primary font-bold">{{ capitalize(htmlMessage.role) }}</div>
+              <div v-html="htmlMessage.contentHtml" class="text-xl text-color-secondary"></div>
+            </div>
           </div>
-          <div class="flex align-items-center surface-100 p-2 m-3 border-round-3xl">
+          <div class="flex align-items-end   surface-100 p-2 m-3 border-round-3xl">
             <Textarea v-model="input" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full border-round-3xl text-xl" />
             <div class="cursor-pointer m-2 mx-4" @click="onClick">
               <i class="pi pi-send text-primary text-2xl"></i>
@@ -22,12 +29,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, onBeforeUnmount, watch } from "vue";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonTextarea, IonFabButton, IonIcon } from "@ionic/vue";
+import { ref, onMounted,  watch, computed } from "vue";
+import { IonContent, IonPage,} from "@ionic/vue";
 import { useGpt, execGpt } from "@/services/gpt";
+import { marked } from 'marked';
+import {capitalize} from 'lodash'
 
 const input = ref("");
-const contentRef = ref<any>();
 
 const scrollToBottom = () => {
   const textArea:any = document.getElementById('textarea');
@@ -36,12 +44,23 @@ const scrollToBottom = () => {
 
 onMounted(() => scrollToBottom());
 
-const { message } = useGpt();
+const { messageAssistant, messages, status } = useGpt();
 
-watch(message, scrollToBottom);
+const htmlMessage = computed(()=> ({
+  ...messageAssistant.value,
+  ...{contentHtml: marked.parse(messageAssistant.value.content)}
+}))
+const htmlMessages = computed(() => messages.value.map((messageObj:any)=> ({
+  ...messageObj,
+  ...{contentHtml: marked.parse(messageObj.content)}
+})))
+
+watch(htmlMessage, scrollToBottom);
+watch(htmlMessages, scrollToBottom, {deep: true});
 
 async function onClick() {
-  await execGpt(input.value);
+  execGpt(input.value);
+  input.value = ''
 }
 </script>
 
