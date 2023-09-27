@@ -7,13 +7,13 @@
         </div>
         <div class="overflow-auto flex flex-column justify-content-between h-full">
           <div id="textarea"  class="h-full overflow-auto surface-100 p-3" >
-            <div v-for="(htmlMessageObj, index) in htmlMessages" :key="`message-${index}`" class="border-bottom-2 surface-border mb-4">
+            <div v-for="(htmlMessageObj, index) in htmlMessages" :key="`message-${index}`" class="mb-4" :class="{'border-bottom-2 surface-border': index < htmlMessages.length - 1}">
               <div class="text-xl text-primary font-bold">{{ capitalize(htmlMessageObj.role) }}</div>
               <div class="text-color text-xl" v-html="htmlMessageObj.contentHtml"></div>
             </div>
             <div v-if="status === 1">
               <div class="text-xl text-primary font-bold">{{ capitalize(htmlMessage.role) }}</div>
-              <div v-html="htmlMessage.contentHtml" class="text-xl text-color-secondary"></div>
+              <div v-html="htmlMessage.contentHtml" class="text-xl text-color"></div>
             </div>
           </div>
           <div class="flex align-items-end   surface-100 p-2 m-3 border-round-3xl">
