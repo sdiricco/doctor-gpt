@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
 import './registerServiceWorker';
+import {createSupabaseClient} from "./services/supabase"
 
 /*****************************************************************************/
 /* PRIME VUE CSS */
@@ -179,3 +180,5 @@ app.directive("badge", BadgeDirective);
 router.isReady().then(() => {
   app.mount('#app');
 });
+
+createSupabaseClient();

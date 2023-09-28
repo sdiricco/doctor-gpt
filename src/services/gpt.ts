@@ -11,10 +11,10 @@ const openAi = new OpenAI({
 
 const status = ref(0);
 
-const messageSystem = {
+const systemMessage = ref({
   role: "system",
   content: `Fornisci sempre la risposta utilizzando sintassi html ed evita il carattere ("). Sei un medico virtuale, l'utente è il tuo paziente. Cerca di aiutarlo fornendo una diagnosi del problema che ha o analizzando i sintomi che ti descrive. Devi cercare di fornire visite da fare e tutto il possibile.`,
-}
+})
 
 const messages = ref<any>([]);
 
@@ -23,11 +23,12 @@ const messageAssistant = ref({
   content: ''
 });
 
-export function useGpt(): {messageAssistant:Ref, messages: Ref, status: Ref} {
+export function useGpt(): {messageAssistant:Ref, messages: Ref, status: Ref, systemMessage: Ref<{role: string; content: string}>} {
   return {
     messageAssistant,
     messages,
-    status
+    status,
+    systemMessage
   };
 }
 
@@ -39,8 +40,7 @@ export async function execGpt(input: string){
     content: input,
   });
   const messagesClone = JSONClone(messages.value)
-  messagesClone.unshift(messageSystem)
-  console.log(messagesClone)
+  messagesClone.unshift(systemMessage.value)
   const stream = await openAi.chat.completions.create({
     messages: messagesClone,
     model: "gpt-3.5-turbo",

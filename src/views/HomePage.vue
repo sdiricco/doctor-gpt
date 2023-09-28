@@ -2,8 +2,11 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div class="h-full flex flex-column">
-        <div class="header surface-100 p-3 w-full border-bottom-2 surface-border">
+        <div class="header flex align-items-center justify-content-between surface-100 p-3 w-full border-bottom-2 surface-border">
           <div class="text-xl text-color-secondary font-bold">Doctor Ai</div>
+          <div class="cursor-pointer" @click="onDelete">
+              <i class="pi pi-trash text-color-secondary text-2xl"></i>
+            </div>
         </div>
         <div class="overflow-auto flex flex-column justify-content-between h-full">
           <div id="textarea"  class="h-full overflow-auto surface-100 p-3" >
@@ -34,15 +37,18 @@ import { IonContent, IonPage,} from "@ionic/vue";
 import { useGpt, execGpt } from "@/services/gpt";
 import { marked } from 'marked';
 import {capitalize} from 'lodash'
+import {insertRow, readAllRows, deleteAllRows} from "@/services/supabase"
 
 const input = ref("");
+
+const isLoadingMessages = ref(false)
 
 const scrollToBottom = () => {
   const textArea:any = document.getElementById('textarea');
   textArea.scrollTop = textArea.scrollHeight
 };
 
-onMounted(() => scrollToBottom());
+
 
 const { messageAssistant, messages, status } = useGpt();
 
@@ -55,13 +61,40 @@ const htmlMessages = computed(() => messages.value.map((messageObj:any)=> ({
   ...{contentHtml: marked.parse(messageObj.content)}
 })))
 
+
+//usare un meccanismo di code, creando una variabile tempMessages che contenga i messaggi da salvare su supabase.
+// Quando c'è un nuovo messaggio verrà salvato in questa variabile e poi con un watcher verrà salvato su supabase
+watch(messages, async (values) => {
+  if (!isLoadingMessages.value) {
+    const message = values[values.length - 1];
+    const data = await insertRow({role: message.role, content: message.content})
+  }
+  isLoadingMessages.value = false;
+
+}, {deep: true})
 watch(htmlMessage, scrollToBottom);
 watch(htmlMessages, scrollToBottom, {deep: true});
 
 async function onClick() {
-  execGpt(input.value);
-  input.value = ''
+  const content = input.value
+  execGpt(content);
+  input.value = '';
 }
+
+async function onDelete(){
+  await deleteAllRows();
+  isLoadingMessages.value = true;
+  const data = await readAllRows()
+  messages.value = data.map((message) => ({role: message.role, content: message.content}))
+}
+
+onMounted(async () => {
+  scrollToBottom()
+  isLoadingMessages.value = true;
+  const data = await readAllRows()
+  messages.value = data.map((message) => ({role: message.role, content: message.content}))
+
+});
 </script>
 
 <style scoped>
