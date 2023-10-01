@@ -1,8 +1,13 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+
 import App from './App.vue'
 import router from './router';
 import './registerServiceWorker';
 import {createSupabaseClient} from "./services/supabase"
+
+const pinia = createPinia()
+
 
 /*****************************************************************************/
 /* PRIME VUE CSS */
@@ -113,11 +118,14 @@ import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 /* add icons to the library */
 library.add(faUserSecret)
 
+
 const app = createApp(App)
   .component('font-awesome-icon', FontAwesomeIcon)
   .use(IonicVue)
   .use(PrimeVue)
-  .use(router);
+  .use(router)
+  .use(pinia)
+
 
 /*****************************************************************************/
 /* PRIME VUE - COMPONENTS */

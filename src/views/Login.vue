@@ -14,7 +14,7 @@
             style="border-radius: 30px" />
           <div class="text-xl text-white-alpha-60 font-medium mb-1">Password</div>
           <InputText
-            type="text"
+            type="password"
             class="appearance-none border-none p-3 w-full outline-none text-xl mb-8 bg-white-alpha-10 text-white-alpha-60"
             v-model="password"
             style="border-radius: 30px" />
@@ -47,6 +47,9 @@ import { IonContent, IonPage } from "@ionic/vue";
 import { ref } from "vue";
 import { signIn, signUp } from "@/services/supabase";
 import router from "@/router"
+import {useAuthStore} from "@/store/auth"
+
+const authStore = useAuthStore();
 
 const email = ref("");
 const password = ref("");
