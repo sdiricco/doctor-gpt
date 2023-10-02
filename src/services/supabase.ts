@@ -1,5 +1,6 @@
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/constants";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../constants";
+import {AppError} from "../errors"
 
 export let supabase: SupabaseClient | undefined = undefined;
 
@@ -16,7 +17,10 @@ export async function signUp(payload: { email: string; password: string }) {
     password,
   });
   if (error) {
-    throw error;
+    throw new AppError(error.message, {
+      name: 'Supabase Auth Error',
+      code: error.status
+    })
   }
   return data;
 }
@@ -28,7 +32,10 @@ export async function signIn(payload: { email: string; password: string }) {
     password,
   })
   if (error) {
-    throw error;
+    throw new AppError(error.message, {
+      name: 'Supabase Auth Error',
+      code: error.status
+    })
   }
   return data;
 }
@@ -36,7 +43,7 @@ export async function signIn(payload: { email: string; password: string }) {
 export async function readAllRows() {
   const { data, error } = await supabase!.from("doctor-chat").select("*");
   if (error) {
-    throw error;
+    throw new AppError(error.message)
   }
   return data;
 }
@@ -44,7 +51,7 @@ export async function readAllRows() {
 export async function deleteAllRows() {
   const { data, error } = await supabase!.from("doctor-chat").delete().neq("id", 0);
   if (error) {
-    throw error;
+    throw new AppError(error.message)
   }
   return data;
 }

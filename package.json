@@ -14,7 +14,7 @@
     "start": "vue-cli-service serve"
   },
   "engines": {
-    "node": ">=16 <18"
+    "node": ">=16 <=18"
   },
   "dependencies": {
     "@capacitor/android": "4.0.1",
