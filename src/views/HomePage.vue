@@ -10,17 +10,17 @@
         </div>
         <div class="overflow-auto flex flex-column justify-content-between h-full">
           <div id="textarea"  class="h-full overflow-auto surface-100 p-3" >
-            <div v-for="(htmlMessageObj, index) in htmlMessages" :key="`message-${index}`" class="mb-4" :class="{'border-bottom-2 surface-border': index < htmlMessages.length - 1}">
+            <div v-for="(htmlMessageObj, index) in getMessagesExtended" :key="`message-${index}`" class="mb-4" :class="{'border-bottom-2 surface-border': index < getMessagesExtended.length - 1}">
               <div class="text-xl text-primary font-bold">{{ capitalize(htmlMessageObj.role) }}</div>
               <div class="text-color text-xl" v-html="htmlMessageObj.contentHtml"></div>
             </div>
-            <div v-if="status === 1">
-              <div class="text-xl text-primary font-bold">{{ capitalize(htmlMessage.role) }}</div>
-              <div v-html="htmlMessage.contentHtml" class="text-xl text-color"></div>
+            <div v-if="getGptStatus === 1">
+              <div class="text-xl text-primary font-bold">{{ capitalize(getMessageExtended.role) }}</div>
+              <div v-html="getMessageExtended.contentHtml" class="text-xl text-color"></div>
             </div>
           </div>
           <div class="flex align-items-end   surface-100 p-2 m-3 border-round-3xl">
-            <Textarea v-model="input" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full border-round-3xl text-xl" />
+            <Textarea v-model="userInput" autoResize rows="1" cols="2" class="surface-100 custom-textarea w-full border-round-3xl text-xl" />
             <div class="cursor-pointer m-2 mx-4" @click="onClick">
               <i class="pi pi-send text-primary text-2xl"></i>
             </div>
@@ -38,10 +38,12 @@ import { useGpt, execGpt } from "@/services/gpt";
 import { marked } from 'marked';
 import {capitalize} from 'lodash'
 import {insertRow, readAllRows, deleteAllRows} from "@/services/supabase"
+import {storeToRefs} from "pinia"
+import {useMainStore} from "@/store/main"
+import * as supabase from "@/services/supabase"
 
-const input = ref("");
-
-const isLoadingMessages = ref(false)
+const mainStore = useMainStore()
+const {userInput, getMessageExtended, getMessagesExtended, getGptStatus} = storeToRefs(mainStore)
 
 const scrollToBottom = () => {
   const textArea:any = document.getElementById('textarea');
@@ -50,49 +52,36 @@ const scrollToBottom = () => {
 
 
 
-const { messageAssistant, messages, status } = useGpt();
-
-const htmlMessage = computed(()=> ({
-  ...messageAssistant.value,
-  ...{contentHtml: marked.parse(messageAssistant.value.content)}
-}))
-const htmlMessages = computed(() => messages.value.map((messageObj:any)=> ({
-  ...messageObj,
-  ...{contentHtml: marked.parse(messageObj.content)}
-})))
 
 
 //usare un meccanismo di code, creando una variabile tempMessages che contenga i messaggi da salvare su supabase.
 // Quando c'è un nuovo messaggio verrà salvato in questa variabile e poi con un watcher verrà salvato su supabase
-watch(messages, async (values) => {
-  if (!isLoadingMessages.value) {
-    const message = values[values.length - 1];
-    const data = await insertRow({role: message.role, content: message.content})
-  }
-  isLoadingMessages.value = false;
+// watch(getMessagesExtended, async (values) => {
+//   if (!isLoadingMessages.value) {
+//     const message = values[values.length - 1];
+//     const data = await insertRow({role: message.role, content: message.content})
+//   }
+//   isLoadingMessages.value = false;
 
-}, {deep: true})
-watch(htmlMessage, scrollToBottom);
-watch(htmlMessages, scrollToBottom, {deep: true});
+// }, {deep: true})
+watch(getMessageExtended, scrollToBottom);
+watch(getMessagesExtended, scrollToBottom, {deep: true});
 
 async function onClick() {
-  const content = input.value
-  execGpt(content);
-  input.value = '';
+  mainStore.sendMessageToGPT();
 }
 
 async function onDelete(){
   await deleteAllRows();
-  isLoadingMessages.value = true;
-  const data = await readAllRows()
-  messages.value = data.map((message) => ({role: message.role, content: message.content}))
+  // isLoadingMessages.value = true;
+  // const data = await readAllRows()
+  // messages.value = data.map((message) => ({role: message.role, content: message.content}))
 }
 
 onMounted(async () => {
-  scrollToBottom()
-  isLoadingMessages.value = true;
-  const data = await readAllRows()
-  messages.value = data.map((message) => ({role: message.role, content: message.content}))
+  scrollToBottom();
+  await mainStore.getConversation();
+
 
 });
 </script>

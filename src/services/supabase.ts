@@ -40,8 +40,9 @@ export async function signIn(payload: { email: string; password: string }) {
   return data;
 }
 
-export async function readAllRows() {
-  const { data, error } = await supabase!.from("doctor-chat").select("*");
+export async function readAllRows(payload: {user_id:string}) {
+  const {user_id} = payload
+  const { data, error } = await supabase!.from("doctor-chat").select("*").eq('user_id', user_id);
   if (error) {
     throw new AppError(error.message)
   }
@@ -56,9 +57,9 @@ export async function deleteAllRows() {
   return data;
 }
 
-export async function insertRow(payload: { role: string; content: string }) {
-  const { role, content } = payload;
-  const { data, error } = await supabase!.from("doctor-chat").insert([{ role, content }]).select();
+export async function insertRow(payload: { user_id:string; role: string; content: string }) {
+  const { role, content, user_id } = payload;
+  const { data, error } = await supabase!.from("doctor-chat").insert([{ user_id, role, content }]).select();
   if (error) {
     throw error;
   }
