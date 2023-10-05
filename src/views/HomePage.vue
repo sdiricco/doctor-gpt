@@ -4,7 +4,7 @@
       <div class="h-full flex flex-column">
         <div class="header flex align-items-center justify-content-between surface-100 p-3 w-full border-bottom-2 surface-border">
           <div class="text-xl text-color-secondary font-bold">Doctor Ai</div>
-          <div class="cursor-pointer" @click="onDelete">
+          <div class="cursor-pointer" >
               <i class="pi pi-trash text-color-secondary text-2xl"></i>
             </div>
         </div>
@@ -34,13 +34,9 @@
 <script lang="ts" setup>
 import { ref, onMounted,  watch, computed } from "vue";
 import { IonContent, IonPage,} from "@ionic/vue";
-import { useGpt, execGpt } from "@/services/gpt";
-import { marked } from 'marked';
 import {capitalize} from 'lodash'
-import {insertRow, readAllRows, deleteAllRows} from "@/services/supabase"
 import {storeToRefs} from "pinia"
 import {useMainStore} from "@/store/main"
-import * as supabase from "@/services/supabase"
 
 const mainStore = useMainStore()
 const {userInput, getMessageExtended, getMessagesExtended, getGptStatus} = storeToRefs(mainStore)
@@ -50,20 +46,6 @@ const scrollToBottom = () => {
   textArea.scrollTop = textArea.scrollHeight
 };
 
-
-
-
-
-//usare un meccanismo di code, creando una variabile tempMessages che contenga i messaggi da salvare su supabase.
-// Quando c'è un nuovo messaggio verrà salvato in questa variabile e poi con un watcher verrà salvato su supabase
-// watch(getMessagesExtended, async (values) => {
-//   if (!isLoadingMessages.value) {
-//     const message = values[values.length - 1];
-//     const data = await insertRow({role: message.role, content: message.content})
-//   }
-//   isLoadingMessages.value = false;
-
-// }, {deep: true})
 watch(getMessageExtended, scrollToBottom);
 watch(getMessagesExtended, scrollToBottom, {deep: true});
 
@@ -71,12 +53,6 @@ async function onClick() {
   mainStore.sendMessageToGPT();
 }
 
-async function onDelete(){
-  await deleteAllRows();
-  // isLoadingMessages.value = true;
-  // const data = await readAllRows()
-  // messages.value = data.map((message) => ({role: message.role, content: message.content}))
-}
 
 onMounted(async () => {
   scrollToBottom();

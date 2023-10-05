@@ -34,7 +34,7 @@
             style="border-radius: 30px"
             label="Sign Up"></Button>
             <Button
-            @click="onSkip"
+            @click="authStore.skipLogin"
             type="button"
             class="w-full appearance-none border-none p-3 w-full outline-none text-xl mb-4 font-medium bg-white-alpha-50 hover:bg-white-alpha-40 active:bg-white-alpha-20 text-white-alpha-80 cursor-pointer transition-colors transition-duration-150"
             style="border-radius: 30px"
@@ -47,15 +47,9 @@
 
 <script lang="ts" setup>
 import { IonContent, IonPage } from "@ionic/vue";
-import router from "@/router"
 import {useAuthStore} from "@/store/auth"
 
 const authStore = useAuthStore();
-
-async function onSkip(){
-  router.push('/home')
-}
-
 </script>
 
 <style scoped></style>

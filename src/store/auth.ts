@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { useLocalStorage } from "@vueuse/core";
+import { RemovableRef, useLocalStorage } from "@vueuse/core";
 import { SUPABASE_AUTH_KEY } from "@/constants";
 import * as supabase from "@/services/supabase";
 import { AppError } from "@/errors";
@@ -24,6 +24,7 @@ interface IState {
     email: string;
     password: string;
   };
+  incognito: RemovableRef<boolean>;
 }
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -37,6 +38,7 @@ export const useAuthStore = defineStore("auth", {
       email: "",
       password: "",
     },
+    incognito: useLocalStorage('incognito', false),
   }),
   getters: {
     getUserId(state): string | undefined {
@@ -50,9 +52,16 @@ export const useAuthStore = defineStore("auth", {
       this.errorMessage = "";
       try {
         await supabase.signUp({ email, password });
+        router.push('/home')
       } catch (error) {
         this.handleError(error);
       }
+    },
+
+    //skip login
+    async skipLogin(){
+      this.incognito = true;
+      router.push('/home')
     },
 
     //Login
