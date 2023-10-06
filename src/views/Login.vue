@@ -7,7 +7,6 @@
         <div class="p-4 text-center lg:w-30rem" style="border-radius: 12px; color: rgba(255, 255, 255, 0.8)">
           <div class="text-5xl font-medium mb-4">Welcome to Doctor AI</div>
           <Message severity="error" v-if="authStore.errorMessage" @close="authStore.errorMessage = ''">{{ authStore.errorMessage }}</Message>
-
           <div class="text-xl text-white-alpha-60 font-medium mb-1">Email</div>
           <InputText
             type="text"
@@ -20,7 +19,6 @@
             class="appearance-none border-none p-3 w-full outline-none text-xl mb-8 bg-white-alpha-10 text-white-alpha-60"
             v-model="authStore.form.password"
             style="border-radius: 30px" />
-          
           <Button
             @click="authStore.signIn"
             type="button"

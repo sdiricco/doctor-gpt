@@ -23,7 +23,12 @@ const messageAssistant = ref({
   content: ''
 });
 
-export function useGpt(): {messageAssistant:Ref, messages: Ref, status: Ref, systemMessage: Ref<{role: string; content: string}>} {
+export interface IMessage{
+  role: string;
+  content: string
+}
+
+export function useGpt(): {messageAssistant:Ref<IMessage>, messages: Ref<IMessage[]>, status: Ref<number>, systemMessage: Ref<IMessage>} {
   return {
     messageAssistant,
     messages,

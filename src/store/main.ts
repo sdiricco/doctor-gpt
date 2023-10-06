@@ -5,30 +5,47 @@ import * as supabase from "@/services/supabase";
 import { AppError } from "@/errors";
 import { Session, User } from "@supabase/supabase-js";
 import { useAuthStore } from "@/store/auth";
-import { execGpt, useGpt } from "@/services/gpt";
+import { execGpt, useGpt, IMessage } from "@/services/gpt";
 import { marked } from "marked";
+import { Ref } from "vue";
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
 // the first argument is a unique id of the store across your application
+
+interface IState {
+  userInput: string;
+  gpt: {
+    messageAssistant: Ref<IMessage>;
+    messages: Ref<IMessage[]>;
+    status: Ref<number>;
+    systemMessage: Ref<IMessage>;
+  };
+  conversation: any[];
+}
+
 export const useMainStore = defineStore("main", {
-  state: () => ({
+  state: (): IState => ({
     userInput: "",
     gpt: useGpt(),
+    conversation: [],
   }),
   getters: {
+    getIncognito() {
+      return useAuthStore().incognito;
+    },
     getUserId() {
       return useAuthStore().getUserId;
     },
-    getGptStatus(state){
-      return state.gpt.status
+    getGptStatus(state) {
+      return state.gpt.status;
     },
-    getMessageExtended(state){
-      const messageAssistant = state.gpt.messageAssistant
+    getMessageExtended(state) {
+      const messageAssistant = state.gpt.messageAssistant;
       return {
         ...messageAssistant,
-        ...{contentHtml: marked.parse(messageAssistant.content)}
-      }
+        ...{ contentHtml: marked.parse(messageAssistant.content) },
+      };
     },
     getMessagesExtended(state) {
       return state.gpt.messages.map((messageObj: any) => ({
@@ -39,28 +56,33 @@ export const useMainStore = defineStore("main", {
   },
   actions: {
     //send message to chat gpt
-    sendMessageToGPT() {
+    sendMessage() {
       execGpt(this.userInput.toString());
+      this.userInput = ''
     },
 
-    //delete conversation
-    async deleteConversation() {
-      const user_id = this.getUserId
-      if (!user_id) {
-        return
+    async saveCurrentConversation(){
+      if (!this.getUserId) {
+        console.log('Missing user ID')
+        return;
       }
-      await supabase.deleteAllRows();
-      const data = await supabase.readAllRows({user_id});
-      console.log(data);
+      
     },
 
-    async getConversation() {
-      const user_id = this.getUserId
-      if (!user_id) {
-        return
+    //delete current conversation
+    async deleteCurrentConversation() {
+      this.gpt.messages = []
+    },
+
+    //get conversation history from DB
+    async getConversationHistory() {
+      if (!this.getUserId) {
+        console.log('Missing user ID')
+        return;
       }
-      const response = await supabase.readAllRows({user_id});
-      this.gpt.messages = response.map((message) => ({role: message.role, content: message.content}))
+      const response = await supabase.readAllRows({ user_id: this.getUserId });
+      this.conversation = response;
+      this.gpt.messages = response.map((message:any) => ({ role: message.role, content: message.content }));
     },
   },
 });
